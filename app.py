@@ -57,19 +57,6 @@ def load_PreTrainedModelDetails():
     return PreTrainedModelDetails
 
 
-def data_preprocessor(df):
-    df.gender = df.gender.map({'Male': 0, 'Female': 1})
-    df.hypertension = df.hypertension.map({'Yes': 1, 'No': 0})
-    df.heart_disease = df.heart_disease.map({'Yes': 1, 'No': 0})
-    df.ever_married = df.ever_married.map({'Married': 1, 'Unmarried': 0})
-    df.work_type = df.work_type.map(
-        {'Private Sector': 2, 'Government Sector': 0, 'Never Worked': 1, 'Self-employed': 3, 'Children': 4})
-    df.Residence_type = df.Residence_type.map({'Urban': 1, 'Rural': 0})
-    df.smoking_status = df.smoking_status.map(
-        {'Never Smoked': 2, 'Formerly Smoked': 1, 'Smokes': 3, 'Unknown': 0})
-    return df
-
-
 def get_user_input():
     form = col1.form(key='user input form')
 
@@ -86,8 +73,8 @@ def get_user_input():
     ever_married = form.radio(
         "Ever Married", ['Married', 'Unmarried'], key='ever_married')
 
-    work_type = form.radio("work_type", [
-                           'Private Sector', 'Government Sector', 'Never Worked', 'Self-employed', 'Children'], key='work_type')
+    work_type = form.radio("Work Type", [
+        'Private Sector', 'Government Sector', 'Never Worked', 'Self-employed', 'Children'], key='work_type')
 
     Residence_type = form.radio(
         "Residence Type", ['Urban', 'Rural'], key='Residence_type')
@@ -123,30 +110,43 @@ def get_user_input():
         return user_input
 
 
+def data_preprocessor(df):
+    df.gender = df.gender.map({'Male': 0, 'Female': 1})
+    df.hypertension = df.hypertension.map({'Yes': 1, 'No': 0})
+    df.heart_disease = df.heart_disease.map({'Yes': 1, 'No': 0})
+    df.ever_married = df.ever_married.map({'Married': 1, 'Unmarried': 0})
+    df.work_type = df.work_type.map(
+        {'Private Sector': 2, 'Government Sector': 0, 'Never Worked': 1, 'Self-employed': 3, 'Children': 4})
+    df.Residence_type = df.Residence_type.map({'Urban': 1, 'Rural': 0})
+    df.smoking_status = df.smoking_status.map(
+        {'Never Smoked': 2, 'Formerly Smoked': 1, 'Smokes': 3, 'Unknown': 0})
+    return df
+
+
 def main():
     display()
+    user_input_df = get_user_input()
+    processed_user_input = data_preprocessor(user_input_df)
+
+    if user_input_df is not None:
+        PreTrainedModelDetails = load_PreTrainedModelDetails()
+
+        # Random Forest Classifier
+        DecisionTreeClassifier = PreTrainedModelDetails.get('model')
+
+        prediction = DecisionTreeClassifier.predict(processed_user_input)
+
+        st.subheader('Prediction')
+
+        if prediction == 0:
+            st.success("Patient is not at risk of getting a stroke.")
+        else:
+            st.warning("Patient is at risk of getting a stroke.")
 
 
 if __name__ == '__main__':
     main()
 
-
-user_input_df = get_user_input()
-processed_user_input = data_preprocessor(user_input_df)
-
-PreTrainedModelDetails = load_PreTrainedModelDetails()
-
-# Random Forest Classifier
-DecisionTreeClassifier = PreTrainedModelDetails.get('model')
-
-prediction = DecisionTreeClassifier.predict(processed_user_input)
-
-st.subheader('Prediction')
-
-if prediction == 0:
-    st.success("Patient is not at risk of getting a stroke.")
-else:
-    st.warning("Patient is at risk of getting a stroke.")
 
 # Sidebar Configurations
 st.sidebar.header("Introduction")
