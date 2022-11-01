@@ -73,31 +73,31 @@ def data_preprocessor(df):
 def get_user_input():
     form = col1.form(key='user input form')
 
-    gender = form.radio("gender", ['Male', 'Female', 'Other'], key='gender')
+    gender = form.radio("Gender", ['Male', 'Female', 'Other'], key='gender')
 
-    age = form.number_input("age", 1, 120, key='age')
+    age = form.number_input("Age", 1, 120, key='age')
 
     hypertension = form.radio(
-        "hypertension", ['Yes', 'No'], key='hypertension')
+        "Hypertension", ['Yes', 'No'], key='hypertension')
 
     heart_disease = form.radio(
-        "heart_disease", ['Yes', 'No'], key='heart_disease')
+        "Heart Disease", ['Yes', 'No'], key='heart_disease')
 
     ever_married = form.radio(
-        "ever_married", ['Married', 'Unmarried'], key='ever_married')
+        "Ever Married", ['Married', 'Unmarried'], key='ever_married')
 
     work_type = form.radio("work_type", [
                            'Private Sector', 'Government Sector', 'Never Worked', 'Self-employed', 'Children'], key='work_type')
 
     Residence_type = form.radio(
-        "Residence_type", ['Urban', 'Rural'], key='Residence_type')
+        "Residence Type", ['Urban', 'Rural'], key='Residence_type')
 
     avg_glucose_level = form.number_input(
-        "avg_glucose_level", 40.0, 400.0, key='avg_glucose_level')
+        "Avg. Glucose Level", 40.0, 400.0, key='avg_glucose_level')
 
-    bmi = form.number_input("bmi", 10.00, 120.00, key='bmi')
+    bmi = form.number_input("BMI", 10.00, 120.00, key='bmi')
 
-    smoking_status = form.radio("smoking_status", [
+    smoking_status = form.radio("Smoking Status", [
                                 'Never Smoked', 'Formerly Smoked', 'Smokes', 'Unknown'], key='smoking_status')
 
     submitButton = form.form_submit_button(label='Predict Stroke Condition')
