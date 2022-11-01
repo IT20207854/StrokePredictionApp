@@ -17,6 +17,7 @@ import matplotlib
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder, StandardScaler
+from sklearn.preprocessing import OneHotEncoder
 
 # Background
 import base64
@@ -61,9 +62,6 @@ def prediction(input_df):
     # Random Forest Classifier
     RandomForestClassifier = PreTrainedModelDetails.get('model')
 
-    # PreFitted Encoder
-    PreFittedEncoder = PreTrainedModelDetails.get('encoder')
-
     # PreFitted Scaler
     PreFittedScaler = PreTrainedModelDetails.get('scaler')
 
@@ -71,31 +69,14 @@ def prediction(input_df):
 
     categorical_cols = PreTrainedModelDetails.get('categorical_cols')
 
-    label_gender = LabelEncoder()
-    label_married = LabelEncoder()
-    label_work = LabelEncoder()
-    label_residence = LabelEncoder()
-    label_smoking = LabelEncoder()
-
-    categorical_cols[0] = label_gender.fit_transform(
-        categorical_cols['gender'])
-    categorical_cols[1] = label_work.fit_transform(
-        categorical_cols['work_type'])
-    categorical_cols[2] = label_residence.fit_transform(
-        categorical_cols['Residence_type'])
-    categorical_cols[3] = label_smoking.fit_transform(
-        categorical_cols['smoking_status'])
-    categorical_cols[4] = label_married.fit_transform(
-        categorical_cols['ever_married'])
-
-    # encoded_cols = PreTrainedModelDetails.get('encoded_cols')
+    encoded_cols = PreTrainedModelDetails.get('encoded_cols')
 
     input_df[categorical_cols] = PreFittedEncoder.transform(
         input_df[categorical_cols])
     input_df[numerical_cols] = PreFittedScaler.transform(
         input_df[numerical_cols])
 
-    inputs_for_prediction = input_df[numerical_cols+categorical_cols]
+    inputs_for_prediction = input_df[numerical_cols + encoded_cols]
 
     prediction = RandomForestClassifier.predict(inputs_for_prediction)
 
@@ -109,23 +90,59 @@ def prediction(input_df):
 
 def get_user_input():
     form = col1.form(key='user input form')
-    gender = form.radio("gender", ['Male', 'Female', 'Other'], key='gender')
+
+    gender_select = form.radio("gender", ['Male', 'Female', 'Other'], key='gender')
+    gender_vals = {'Female': 0,
+    'Male': 1,
+    'Other': 2}
+    gender = gender_vals[gender_select]
+    
+
     age = form.number_input("age", 1, 120, key='age')
-    hypertension = form.radio(
+
+    hypertension_select = form.radio(
         "hypertension", ['Yes', 'No'], key='hypertension')
-    heart_disease = form.radio(
+    hypertension_vals = {'No': 0,
+    'Yes': 1}
+    hypertension = hypertension_vals[hypertension_select]
+
+    heart_disease_select = form.radio(
         "heart_disease", ['Yes', 'No'], key='heart_disease')
-    ever_married = form.radio(
+    heart_disease_vals = {'No': 0,
+    'Yes': 1}
+    heart_disease = heart_disease_vals[heart_disease_select]
+
+    ever_married_select = form.radio(
         "ever_married", ['Married', 'Unmarried'], key='ever_married')
-    work_type = form.radio("work_type", ['Private Sector', 'Government Sector', 'Never Worked',
+    ever_married_vals = {'No': 0,
+    'Yes': 1}
+    ever_married = ever_married_vals[ever_married_select]
+
+    work_type_select = form.radio("work_type", ['Private Sector', 'Government Sector', 'Never Worked',
                                          'Self-employed', 'Children'], key='work_type')
-    Residence_type = form.radio(
+    work_type_vals = {'Private': 0,
+    'Self-employed': 1,
+    }
+    work_type = work_type_vals[work_type_select]
+    
+    Residence_type_select = form.radio(
         "Residence_type", ['Urban', 'Rural'], key='Residence_type')
+    Residence_type_vals = {'Urban': 1,
+    'Rural': 0,
+    }
+    Residence_type = Residence_type_vals[Residence_type_select]
+
     avg_glucose_level = form.number_input(
         "avg_glucose_level", 40.0, 400.0, key='avg_glucose_level')
+    
     bmi = form.number_input("bmi", 10.00, 120.00, key='bmi')
-    smoking_status = form.radio("smoking_status", [
+    
+    smoking_status_select = form.radio("smoking_status", [
         'Never Smoked', 'Formerly Smoked', 'Smokes', 'Unknown'], key='smoking_status')
+    smoking_status_vals = {'Urban': 1,
+    'Rural': 0,
+    }
+    Residence_type = Residence_type_vals[Residence_type_select]
 
     submitButton = form.form_submit_button(label='Predict Stroke Condition')
 
