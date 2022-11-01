@@ -123,6 +123,14 @@ def get_user_input():
         return user_input
 
 
+def main():
+    display()
+
+
+if __name__ == '__main__':
+    main()
+
+
 user_input_df = get_user_input()
 processed_user_input = data_preprocessor(user_input_df)
 
