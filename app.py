@@ -28,6 +28,10 @@ col1, col2 = st.columns([2, 1])
 # Adding background image
 
 
+def display():
+    col1.title('Stroke Prediction Application')
+
+
 def add_bg_from_local(image_file):
     with open(image_file, "rb") as image_file:
         encoded_string = base64.b64encode(image_file.read())
@@ -47,14 +51,26 @@ def add_bg_from_local(image_file):
 add_bg_from_local('images/hos2.avif')
 
 
-def display():
-    col1.title('Stroke Prediction Application')
-
-
 def load_PreTrainedModelDetails():
     PreTrainedModelDetails = joblib.load(
         "model/stroke_pred_classification.joblib")
     return PreTrainedModelDetails
+
+
+def prediction(input_df):
+    PreTrainedModelDetails = load_PreTrainedModelDetails()
+
+    # Random Forest Classifier
+    DecisionTreeClassifier = PreTrainedModelDetails.get('model')
+
+    prediction = DecisionTreeClassifier.predict(input_df)
+
+    st.subheader('Prediction')
+
+    if prediction == 0:
+        st.success("Patient is not at risk of getting a stroke.")
+    else:
+        st.warning("Patient is at risk of getting a stroke.")
 
 
 def get_user_input():
@@ -125,43 +141,30 @@ def data_preprocessor(df):
 
 def main():
     display()
+    # Sidebar Configurations
+    st.sidebar.header("Introduction")
+
+    with st.sidebar:
+        st.write("A stroke, sometimes called a brain attack, occurs when something blocks blood supply to part of the brain or when a blood vessel in the brain bursts. In either case, parts of the brain become damaged or die. A stroke can cause lasting brain damage, long-term disability, or even death.")
+
+    st.sidebar.image("images/stroke9.jfif", use_column_width=True)
+
+    # Image grid
+    col2.image("images/stroke1.jpg")
+    col2.image("images/stroke3.jpg")
+    col2.image("images/stroke4.jpg")
+    col2.image("images/stroke2.jpg")
+    col2.image("images/stroke5.jfif")
+    col2.image("images/stroke6.jfif")
+    col2.image("images/stroke7.jfif")
+    col2.image("images/stroke8.jfif")
+
     user_input_df = get_user_input()
     processed_user_input = data_preprocessor(user_input_df)
 
     if user_input_df is not None:
-        PreTrainedModelDetails = load_PreTrainedModelDetails()
-
-        # Random Forest Classifier
-        DecisionTreeClassifier = PreTrainedModelDetails.get('model')
-
-        prediction = DecisionTreeClassifier.predict(processed_user_input)
-
-        st.subheader('Prediction')
-
-        if prediction == 0:
-            st.success("Patient is not at risk of getting a stroke.")
-        else:
-            st.warning("Patient is at risk of getting a stroke.")
+        prediction(processed_user_input)
 
 
 if __name__ == '__main__':
     main()
-
-
-# Sidebar Configurations
-st.sidebar.header("Introduction")
-
-with st.sidebar:
-    st.write("A stroke, sometimes called a brain attack, occurs when something blocks blood supply to part of the brain or when a blood vessel in the brain bursts. In either case, parts of the brain become damaged or die. A stroke can cause lasting brain damage, long-term disability, or even death.")
-
-st.sidebar.image("images/stroke9.jfif", use_column_width=True)
-
-# Image grid
-col2.image("images/stroke1.jpg")
-col2.image("images/stroke3.jpg")
-col2.image("images/stroke4.jpg")
-col2.image("images/stroke2.jpg")
-col2.image("images/stroke5.jfif")
-col2.image("images/stroke6.jfif")
-col2.image("images/stroke7.jfif")
-col2.image("images/stroke8.jfif")
